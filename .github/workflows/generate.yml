@@ -1,0 +1,39 @@
+# .github/workflows/publish.yml
+name: Generate a build and push to another branch
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build and Push
+    steps:
+      - name: git-checkout
+        uses: actions/checkout@v2
+
+      - name: setup node.js
+        uses: actions/setup-node@v2.4.0
+        with:
+          node-version: 18.x
+
+      - name: dep
+        run: yarn
+
+      - name: build
+        run: yarn build
+
+      - name: prepare package
+        run: mkdir out && mv package.json out && mv dist out && mv README.md out && mv LICENSE out
+
+      - name: Prepare Production Release
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: dist
+          FOLDER: out
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          MESSAGE: "Build: ({sha}) {msg}"
