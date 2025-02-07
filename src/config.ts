@@ -2,7 +2,7 @@ import { TConfig } from "./types";
 
 export const mainnetConfig: TConfig = {
     chainId: 56n,
-    emmetAddress: "",
+    emmetAddress: "0x6b30f76CecE9F92D27f0e9Ad78312E77709E74A5",
     tokensaleAddress: "",
     rpcs: [
         "https://binance.llamarpc.com",
@@ -17,7 +17,7 @@ export const testnetConfig: TConfig = {
     emmetAddress: "0xd455eba1b88d175778968c45d161bac6fd5c8e60",
     tokensaleAddress: "0x4558C2a410538a5f3dF05fE75619c847c0aAed34",
     rpcs: [
-        "https://api.zan.top/bsc-testnet",
+        // "https://api.zan.top/bsc-testnet",
         "https://bsc-testnet-rpc.publicnode.com",
         "https://endpoints.omniatech.io/v1/bsc/testnet/public",
     ],

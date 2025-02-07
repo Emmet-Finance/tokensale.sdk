@@ -14,7 +14,9 @@ export async function TokensaleHelper({
 }: TConfig): Promise<Helper> {
 
     const fetchProvider = (index?: number): Provider => {
-        const randomRpcIndex = index ?? Math.floor(Math.random() * rpcs.length);
+        const randomRpcIndex: number = index as number > rpcs.length 
+            ? Math.floor(Math.random() * rpcs.length) 
+            : index as number;
         return new JsonRpcProvider(rpcs[randomRpcIndex], chainId);
     };
 
