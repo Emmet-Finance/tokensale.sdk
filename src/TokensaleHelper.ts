@@ -1,8 +1,8 @@
-import { ContractRunner, ContractTransactionReceipt, ContractTransactionResponse, JsonRpcProvider, Provider } from "ethers";
+import { ContractRunner, ContractTransactionReceipt, ContractTransactionResponse, JsonRpcProvider, Provider, ZeroAddress } from "ethers";
 import { Helper, TConfig } from "./types";
 import { EMMET__factory, Tokensale__factory } from "./factories";
 import { EMMET } from "./contracts/EMMET";
-import { sleep } from "./utils";
+import { computeRefKey, sleep } from "./utils";
 import { TSymbol } from "./interfaces";
 
 export async function TokensaleHelper({
@@ -92,6 +92,22 @@ export async function TokensaleHelper({
                 const tokensale = getTokensale(provider);
                 return await tokensale.estimate(pay);
             });
+        },
+        // -----------------------------------------------------------------
+        async isRegisteredRef(ref): Promise<boolean> {
+            if(ref){
+                return withRpcRotation(async (provider) => {
+                    const tokensale = getTokensale(provider);
+                    const key = computeRefKey(ref);
+                    const owner = await tokensale.references(key);
+                    if(owner !== ZeroAddress){
+                        return true;
+                    }
+                    return false;
+                });
+                
+            }
+            return false;
         },
         // -----------------------------------------------------------------
         async buy(signer, pay, ref): Promise<string|undefined> {

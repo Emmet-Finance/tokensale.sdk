@@ -14,6 +14,7 @@ export interface Tokensale {
     // READ
     claimable: (address: string) => Promise<bigint>;
     estimate: (pay: bigint) => Promise<bigint>;
+    isRegisteredRef: (ref: string) => Promise<boolean>;
     // WRITE
     buy: (signer: Signer, pay: bigint, ref: string) => Promise<string|undefined>;
     claim: (signer: Signer) => Promise<string|undefined>;
