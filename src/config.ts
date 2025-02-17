@@ -3,6 +3,7 @@ import { TConfig } from "./types";
 export const mainnetConfig: TConfig = {
     chainId: 56n,
     emmetAddress: "0x6b30f76CecE9F92D27f0e9Ad78312E77709E74A5",
+    stakingAddress: "",
     tokensaleAddress: "0x02D4c32a5D68ABEE334d68f21C81012C37D625b7",
     rpcs: [
         "https://binance.llamarpc.com",
@@ -15,6 +16,7 @@ export const mainnetConfig: TConfig = {
 export const testnetConfig: TConfig = {
     chainId: 97n,
     emmetAddress: "0xd455eba1b88d175778968c45d161bac6fd5c8e60",
+    stakingAddress: "0xD914c365f5177AaC9E91D3477e43d0Ca10768d52",
     tokensaleAddress: "0x4558C2a410538a5f3dF05fE75619c847c0aAed34",
     rpcs: [
         // "https://api.zan.top/bsc-testnet",

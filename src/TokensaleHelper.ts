@@ -1,14 +1,16 @@
 import { ContractRunner, ContractTransactionReceipt, ContractTransactionResponse, JsonRpcProvider, Provider, ZeroAddress } from "ethers";
-import { Helper, TConfig } from "./types";
+import { Helper, TConfig, TUserPositions } from "./types";
 import { EMMET__factory, Tokensale__factory } from "./factories";
 import { EMMET } from "./contracts/EMMET";
-import { computeRefKey, sleep } from "./utils";
+import { computeRefKey, parsePositionsAndRewards, sleep } from "./utils";
 import { TSymbol } from "./interfaces";
+import { Staking__factory } from "./factories/Staking__factory";
 
 export async function TokensaleHelper({
     chainId,
     emmetAddress,
     rpcs,
+    stakingAddress,
     tokensaleAddress,
     usdtAddress
 }: TConfig): Promise<Helper> {
@@ -25,6 +27,8 @@ export async function TokensaleHelper({
     const getUsdt = (runner: ContractRunner) => EMMET__factory.connect(usdtAddress, runner);
 
     const getTokensale = (runner: ContractRunner) => Tokensale__factory.connect(tokensaleAddress, runner);
+
+    const getStaking = (runner: ContractRunner) => Staking__factory.connect(stakingAddress, runner);
 
     async function withRpcRotation<T>(fn: (provider: Provider) => Promise<T>, attempt = 0): Promise<T> {
         if (attempt >= rpcs.length) throw new Error("All RPCs failed");
@@ -153,7 +157,41 @@ export async function TokensaleHelper({
                 }
             }
             return undefined;
-        }
+        },
+        // -----------------------------------------------------------------
+        // interface IStaking
+        // -----------------------------------------------------------------
+        async positions(address): Promise<TUserPositions> {
+
+            return withRpcRotation(async (provider) => {
+                const staking = getStaking(provider);
+                const reply = await staking.positionsAndRewards(address);
+                return parsePositionsAndRewards(reply);
+            });
+            
+        },
+        // -----------------------------------------------------------------
+        async stake(signer, amount, period): Promise<string | undefined> {
+            const staking = getStaking(signer);
+            const response: ContractTransactionResponse = await staking.stake(amount, period);
+            const result: null | ContractTransactionReceipt = await response.wait(3);
+            return result && result.hash ? result.hash : undefined;
+        },
+        // -----------------------------------------------------------------
+        async unstake(signer, posIndex): Promise<string | undefined> {
+            const staking = getStaking(signer);
+            const response: ContractTransactionResponse = await staking.unstake(posIndex);
+            const result: null | ContractTransactionReceipt = await response.wait(3);
+            return result && result.hash ? result.hash : undefined;
+        },
+        // -----------------------------------------------------------------
+        async withdrawRewards(signer, posIndex): Promise<string | undefined> {
+            const staking = getStaking(signer);
+            const response: ContractTransactionResponse = await staking.withdrawRewards(posIndex);
+            const result: null | ContractTransactionReceipt = await response.wait(3);
+            return result && result.hash ? result.hash : undefined;
+        },
+        // -----------------------------------------------------------------
     }
 
 }
