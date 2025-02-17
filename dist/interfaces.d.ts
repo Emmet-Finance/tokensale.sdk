@@ -1,4 +1,5 @@
 import { Signer } from "ethers";
+import { TUserPositions, Period } from "./types";
 export type TSymbol = "EMMET" | "USDT";
 export interface Token {
     allowance: (address: string, symbol: TSymbol) => Promise<bigint>;
@@ -12,5 +13,11 @@ export interface Tokensale {
     buy: (signer: Signer, pay: bigint, ref: string) => Promise<string | undefined>;
     claim: (signer: Signer) => Promise<string | undefined>;
     createReference: (signer: Signer, ref: string) => Promise<string | undefined>;
+}
+export interface IStaking {
+    positions: (address: string) => Promise<TUserPositions>;
+    stake: (signer: Signer, amount: bigint, period: Period) => Promise<string | undefined>;
+    unstake: (signer: Signer, posIndex: number) => Promise<string | undefined>;
+    withdrawRewards: (signer: Signer, posIndex: number) => Promise<string | undefined>;
 }
 //# sourceMappingURL=interfaces.d.ts.map
