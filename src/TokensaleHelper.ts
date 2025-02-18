@@ -51,7 +51,7 @@ export async function TokensaleHelper({
 
     return {
         // -----------------------------------------------------------------
-        // interface Token (ERC20)
+        // interface Token (ERC20) for Tokensale
         // -----------------------------------------------------------------
         async allowance(address, symbol): Promise<bigint> {
             return withRpcRotation(async (provider) => {
@@ -70,6 +70,30 @@ export async function TokensaleHelper({
         async approve(signer, amount): Promise<string|undefined> {
             const token: EMMET = getToken("USDT", signer);
             const response: ContractTransactionResponse = await token.approve(tokensaleAddress, amount);
+            const result: null | ContractTransactionReceipt = await response.wait(3);
+            if(result && result.logs){
+                const topic = "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925";
+                for(const log of result.logs){
+                    if(log.topics.includes(topic)){
+                        return log.transactionHash
+                    }
+                }
+            }
+            return undefined;
+        },
+        // -----------------------------------------------------------------
+        // interface Token (ERC20) for Staking
+        // -----------------------------------------------------------------
+        async stakingAllowance(address): Promise<bigint> {
+            return withRpcRotation(async (provider) => {
+                const token: EMMET = getToken("EMMET", provider);
+                return await token.allowance(address, stakingAddress);
+            });
+        },
+        // -----------------------------------------------------------------
+        async stakingApprove(signer, amount): Promise<string | undefined> {
+            const token: EMMET = getToken("EMMET", signer);
+            const response: ContractTransactionResponse = await token.approve(stakingAddress, amount);
             const result: null | ContractTransactionReceipt = await response.wait(3);
             if(result && result.logs){
                 const topic = "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925";
