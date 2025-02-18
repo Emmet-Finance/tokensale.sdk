@@ -5,6 +5,8 @@ export interface Token {
     allowance: (address: string, symbol: TSymbol) => Promise<bigint>;
     balance: (address: string, symbol: TSymbol) => Promise<bigint>;
     approve: (signer: Signer, amount: bigint) => Promise<string | undefined>;
+    stakingAllowance: (address: string) => Promise<bigint>;
+    stakingApprove: (signer: Signer, amount: bigint) => Promise<string | undefined>;
 }
 export interface Tokensale {
     claimable: (address: string) => Promise<bigint>;
