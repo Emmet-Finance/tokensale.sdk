@@ -198,21 +198,21 @@ export async function TokensaleHelper({
         async stake(signer, amount, period): Promise<string | undefined> {
             const staking = getStaking(signer);
             const response: ContractTransactionResponse = await staking.stake(amount, period);
-            const result: null | ContractTransactionReceipt = await response.wait(3);
+            const result: null | ContractTransactionReceipt = response ? await response.wait(3) : null;
             return result && result.hash ? result.hash : undefined;
         },
         // -----------------------------------------------------------------
         async unstake(signer, posIndex): Promise<string | undefined> {
             const staking = getStaking(signer);
             const response: ContractTransactionResponse = await staking.unstake(posIndex);
-            const result: null | ContractTransactionReceipt = await response.wait(3);
+            const result: null | ContractTransactionReceipt = response ? await response.wait(3) : null;
             return result && result.hash ? result.hash : undefined;
         },
         // -----------------------------------------------------------------
         async withdrawRewards(signer, posIndex): Promise<string | undefined> {
             const staking = getStaking(signer);
             const response: ContractTransactionResponse = await staking.withdrawRewards(posIndex);
-            const result: null | ContractTransactionReceipt = await response.wait(3);
+            const result: null | ContractTransactionReceipt = response ? await response.wait(3): null;
             return result && result.hash ? result.hash : undefined;
         },
         // -----------------------------------------------------------------
