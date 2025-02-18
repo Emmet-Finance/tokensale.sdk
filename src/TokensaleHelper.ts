@@ -204,16 +204,14 @@ export async function TokensaleHelper({
         // -----------------------------------------------------------------
         async unstake(signer, posIndex): Promise<string | undefined> {
             const staking = getStaking(signer);
-            const response: ContractTransactionResponse = await staking.unstake(posIndex);
-            const result: null | ContractTransactionReceipt = response ? await response.wait(3) : null;
-            return result && result.hash ? result.hash : undefined;
+            await staking.unstake(posIndex);
+            return "Success";
         },
         // -----------------------------------------------------------------
         async withdrawRewards(signer, posIndex): Promise<string | undefined> {
             const staking = getStaking(signer);
-            const response: ContractTransactionResponse = await staking.withdrawRewards(posIndex);
-            const result: null | ContractTransactionReceipt = response ? await response.wait(3): null;
-            return result && result.hash ? result.hash : undefined;
+            await staking.withdrawRewards(posIndex);
+            return "Success";
         },
         // -----------------------------------------------------------------
     }
