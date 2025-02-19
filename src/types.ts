@@ -32,3 +32,17 @@ export enum  Period {
     Quarters3,
     Year
 }
+
+export const PeriodInSec: {[key: Period | number]: number} = {
+    0: 7948800,
+    1: 15811200,
+    2: 23760000,
+    3: 31622400,
+}
+
+export const Terms : {[key: Period | number]: number} = {
+    0: 2400,
+    1: 3200,
+    2: 4000,
+    3: 5000,
+}

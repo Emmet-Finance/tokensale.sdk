@@ -196,22 +196,30 @@ export async function TokensaleHelper({
         },
         // -----------------------------------------------------------------
         async stake(signer, amount, period): Promise<string | undefined> {
+            if(!signer) throw new Error("Tokensale.SDK::stake Error: signer is undefined");
             const staking = getStaking(signer);
+            if(!staking || !staking.withdrawRewards) throw new Error("Tokensale.SDK::stake Error: staking or staking.stake is undefined");
             const response: ContractTransactionResponse = await staking.stake(amount, period);
             const result: null | ContractTransactionReceipt = response ? await response.wait(3) : null;
             return result && result.hash ? result.hash : undefined;
         },
         // -----------------------------------------------------------------
         async unstake(signer, posIndex): Promise<string | undefined> {
+            if(!signer) throw new Error("Tokensale.SDK::unstake Error: signer is undefined");
             const staking = getStaking(signer);
-            await staking.unstake(posIndex);
-            return "Success";
+            if(!staking || !staking.unpause) throw new Error("Tokensale.SDK::unstake Error: staking or staking.unpause is undefined");
+            const response: ContractTransactionResponse = await staking.unstake(posIndex);
+            const result: null | ContractTransactionReceipt = response ? await response.wait(3) : null;
+            return result && result.hash ? result.hash : undefined;
         },
         // -----------------------------------------------------------------
         async withdrawRewards(signer, posIndex): Promise<string | undefined> {
+            if(!signer) throw new Error("Tokensale.SDK::withdrawRewards Error: signer is undefined");
             const staking = getStaking(signer);
-            await staking.withdrawRewards(posIndex);
-            return "Success";
+            if(!staking || !staking.withdrawRewards) throw new Error("Tokensale.SDK::withdrawRewards Error: staking or staking.withdrawRewards is undefined");
+            const response: ContractTransactionResponse = await staking.withdrawRewards(posIndex);
+            const result: null | ContractTransactionReceipt = response ? await response.wait(3) : null;
+            return result && result.hash ? result.hash : undefined;
         },
         // -----------------------------------------------------------------
     }
