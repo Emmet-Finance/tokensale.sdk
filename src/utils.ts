@@ -1,4 +1,4 @@
-import { keccak256, toUtf8Bytes } from "ethers";
+import { BigNumberish, keccak256, toUtf8Bytes } from "ethers";
 import { StakingStorage } from "./contracts/Staking";
 import { Period, PeriodInSec, Terms, TPosition, TUserPositions } from "./types";
 
@@ -48,10 +48,10 @@ export function timeToMaturity(ts: number) {
   }
 }
 
-export function calculateTtlRewards(locked: bigint, period: number | Period): number {
+export function calculateTtlRewards(locked: BigNumberish, period: number | Period): number {
   if (locked === 0n) return 0;
 
-  return Number(locked
+  return Number(BigInt(locked)
     * BigInt(PeriodInSec[period])
     * BigInt(Terms[period])
     / BigInt(PeriodInSec[3])
@@ -59,9 +59,9 @@ export function calculateTtlRewards(locked: bigint, period: number | Period): nu
 }
 
 export function computeUnclaimedRewards(
-  locked: bigint,
+  locked: BigNumberish,
   period: number | Period,
-  claimed: bigint,
+  claimed: BigNumberish,
   start: number
 ): number {
   const ttlRewards: bigint = BigInt(calculateTtlRewards(locked, period));
@@ -72,5 +72,5 @@ export function computeUnclaimedRewards(
   let available: bigint = maturity > _now
     ? ttlRewards
     : ttlRewards * elapsed / BigInt(PeriodInSec[period]);
-  return Number(available > claimed ? available - claimed : 0n);
+  return Number(available > BigInt(claimed) ? available - BigInt(claimed) : 0n);
 }
