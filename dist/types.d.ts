@@ -27,4 +27,10 @@ export declare enum Period {
     Quarters3 = 2,
     Year = 3
 }
+export declare const PeriodInSec: {
+    [key: Period | number]: number;
+};
+export declare const Terms: {
+    [key: Period | number]: number;
+};
 //# sourceMappingURL=types.d.ts.map

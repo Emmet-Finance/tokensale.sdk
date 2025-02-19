@@ -1,5 +1,5 @@
 import { StakingStorage } from "./contracts/Staking";
-import { TUserPositions } from "./types";
+import { Period, TUserPositions } from "./types";
 export declare function computeRefKey(ref: string): string;
 export declare function parsePositionsAndRewards(input: [StakingStorage.PositionStructOutput[], bigint, bigint, bigint] & {
     ps: StakingStorage.PositionStructOutput[];
@@ -15,4 +15,6 @@ export declare function timeToMaturity(ts: number): {
     minutes: number;
     seconds: number;
 };
+export declare function calculateTtlRewards(locked: bigint, period: number | Period): bigint;
+export declare function computeUnclaimedRewards(locked: bigint, period: number | Period, claimed: bigint, start: bigint): bigint;
 //# sourceMappingURL=utils.d.ts.map
