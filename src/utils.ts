@@ -48,29 +48,29 @@ export function timeToMaturity(ts: number) {
   }
 }
 
-export function calculateTtlRewards(locked: bigint, period: number | Period): bigint {
-  if (locked === 0n) return 0n;
+export function calculateTtlRewards(locked: bigint, period: number | Period): number {
+  if (locked === 0n) return 0;
 
-  return locked
+  return Number(locked
     * BigInt(PeriodInSec[period])
     * BigInt(Terms[period])
     / BigInt(PeriodInSec[3])
-    / 10_000n;
+    / 10_000n);
 }
 
 export function computeUnclaimedRewards(
   locked: bigint,
   period: number | Period,
   claimed: bigint,
-  start: bigint
-): bigint {
-  const ttlRewards: bigint = calculateTtlRewards(locked, period);
+  start: number
+): number {
+  const ttlRewards: bigint = BigInt(calculateTtlRewards(locked, period));
   const _now = Date.now();
-  const startMilliseconds = start * 1000n;
+  const startMilliseconds:bigint = BigInt(start) * 1000n;
   const elapsed: bigint = BigInt(_now) - startMilliseconds;
   const maturity: bigint = startMilliseconds + BigInt(PeriodInSec[period]) * 1000n;
   let available: bigint = maturity > _now
     ? ttlRewards
     : ttlRewards * elapsed / BigInt(PeriodInSec[period]);
-  return available > claimed ? available - claimed : 0n;
+  return Number(available > claimed ? available - claimed : 0n);
 }
