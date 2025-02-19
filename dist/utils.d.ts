@@ -1,3 +1,4 @@
+import { BigNumberish } from "ethers";
 import { StakingStorage } from "./contracts/Staking";
 import { Period, TUserPositions } from "./types";
 export declare function computeRefKey(ref: string): string;
@@ -15,6 +16,6 @@ export declare function timeToMaturity(ts: number): {
     minutes: number;
     seconds: number;
 };
-export declare function calculateTtlRewards(locked: bigint, period: number | Period): number;
-export declare function computeUnclaimedRewards(locked: bigint, period: number | Period, claimed: bigint, start: number): number;
+export declare function calculateTtlRewards(locked: BigNumberish, period: number | Period): number;
+export declare function computeUnclaimedRewards(locked: BigNumberish, period: number | Period, claimed: BigNumberish, start: number): number;
 //# sourceMappingURL=utils.d.ts.map
