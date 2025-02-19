@@ -32,7 +32,7 @@ export interface IStaking {
     positions: (address: string) => Promise<TUserPositions>;
     // WRITE Staking
     stake: (signer: Signer, amount: bigint, period: Period) => Promise<string | undefined>;
-    unstake: (signer: Signer, posIndex: number) => Promise<string | undefined>;
+    closeStake: (signer: Signer, posIndex: number) => Promise<string | undefined>;
     withdrawRewards: (signer: Signer, posIndex: number) => Promise<string | undefined>;
 
 }

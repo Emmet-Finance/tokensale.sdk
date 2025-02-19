@@ -204,7 +204,7 @@ export async function TokensaleHelper({
             return result && result.hash ? result.hash : undefined;
         },
         // -----------------------------------------------------------------
-        async unstake(signer, posIndex): Promise<string | undefined> {
+        async closeStake(signer, posIndex): Promise<string | undefined> {
             if(!signer) throw new Error("Tokensale.SDK::unstake Error: signer is undefined");
             const staking = getStaking(signer);
             if(!staking || !staking.unpause) throw new Error("Tokensale.SDK::unstake Error: staking or staking.unpause is undefined");
