@@ -3,7 +3,7 @@ import { TConfig } from "./types";
 export const mainnetConfig: TConfig = {
     chainId: 56n,
     emmetAddress: "0x6b30f76CecE9F92D27f0e9Ad78312E77709E74A5",
-    stakingAddress: "",
+    stakingAddress: "0x19Dc6ff2D315037adEa3a071C8aF9F2751B73b0A",
     tokensaleAddress: "0x02D4c32a5D68ABEE334d68f21C81012C37D625b7",
     rpcs: [
         "https://binance.llamarpc.com",

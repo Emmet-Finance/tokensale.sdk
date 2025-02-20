@@ -20,6 +20,7 @@ export function parsePositionsAndRewards(input: [StakingStorage.PositionStructOu
         maturity: Number(items[2].toString()),
         locked: Number(items[3].toString()),
         claimed: Number(items[4].toString()),
+        unclaimed: Number(items[5].toString()),
       } as TPosition
     }),
     staked: Number(input[1].toString()),

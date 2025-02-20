@@ -30,6 +30,7 @@ export declare namespace StakingStorage {
     maturity: BigNumberish;
     locked: BigNumberish;
     claimed: BigNumberish;
+    unclaimed: BigNumberish;
   };
 
   export type PositionStructOutput = [
@@ -37,13 +38,15 @@ export declare namespace StakingStorage {
     start: bigint,
     maturity: bigint,
     locked: bigint,
-    claimed: bigint
+    claimed: bigint,
+    unclaimed: bigint
   ] & {
     period: bigint;
     start: bigint;
     maturity: bigint;
     locked: bigint;
     claimed: bigint;
+    unclaimed: bigint;
   };
 }
 
@@ -634,12 +637,13 @@ export interface Staking extends BaseContract {
   positions: TypedContractMethod<
     [arg0: AddressLike, arg1: BigNumberish],
     [
-      [bigint, bigint, bigint, bigint, bigint] & {
+      [bigint, bigint, bigint, bigint, bigint, bigint] & {
         period: bigint;
         start: bigint;
         maturity: bigint;
         locked: bigint;
         claimed: bigint;
+        unclaimed: bigint;
       }
     ],
     "view"
@@ -828,12 +832,13 @@ export interface Staking extends BaseContract {
   ): TypedContractMethod<
     [arg0: AddressLike, arg1: BigNumberish],
     [
-      [bigint, bigint, bigint, bigint, bigint] & {
+      [bigint, bigint, bigint, bigint, bigint, bigint] & {
         period: bigint;
         start: bigint;
         maturity: bigint;
         locked: bigint;
         claimed: bigint;
+        unclaimed: bigint;
       }
     ],
     "view"
