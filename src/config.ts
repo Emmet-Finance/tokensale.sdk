@@ -9,6 +9,13 @@ export const mainnetConfig: TConfig = {
         "https://binance.llamarpc.com",
         "https://bsc-rpc.publicnode.com",
         "https://bsc.blockrazor.xyz",
+        "https://rpc-bsc.48.club",
+        "https://bsc-dataseed1.ninicoin.io",
+        "https://bsc-dataseed2.ninicoin.io",
+        "https://bsc-dataseed3.bnbchain.org",
+        "https://bsc-pokt.nodies.app",
+        "https://1rpc.io/bnb",
+        "https://bsc-rpc.publicnode.com",
     ],
     usdtAddress: "0x55d398326f99059ff775485246999027b3197955"
 }
@@ -21,16 +28,6 @@ export const testnetConfig: TConfig = {
     rpcs: [
         "https://bsc-testnet-rpc.publicnode.com",
         "https://endpoints.omniatech.io/v1/bsc/testnet/public",
-        "https://bsc-dataseed.bnbchain.org",
-        "https://rpc.ankr.com/bsc",
-        "https://rpc-bsc.48.club",
-        "https://bsc-dataseed1.ninicoin.io",
-        "https://bsc-dataseed2.ninicoin.io",
-        "https://bsc-dataseed3.bnbchain.org",
-        "https://bsc-pokt.nodies.app",
-        "https://1rpc.io/bnb",
-        "https://bsc-rpc.publicnode.com",
-
     ],
     usdtAddress: "0xe8ab99474b8bb70d0cf258623fcac8d8681a1e50"
 }
