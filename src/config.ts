@@ -19,9 +19,18 @@ export const testnetConfig: TConfig = {
     stakingAddress: "0xD914c365f5177AaC9E91D3477e43d0Ca10768d52",
     tokensaleAddress: "0x4558C2a410538a5f3dF05fE75619c847c0aAed34",
     rpcs: [
-        // "https://api.zan.top/bsc-testnet",
         "https://bsc-testnet-rpc.publicnode.com",
         "https://endpoints.omniatech.io/v1/bsc/testnet/public",
+        "https://bsc-dataseed.bnbchain.org",
+        "https://rpc.ankr.com/bsc",
+        "https://rpc-bsc.48.club",
+        "https://bsc-dataseed1.ninicoin.io",
+        "https://bsc-dataseed2.ninicoin.io",
+        "https://bsc-dataseed3.bnbchain.org",
+        "https://bsc-pokt.nodies.app",
+        "https://1rpc.io/bnb",
+        "https://bsc-rpc.publicnode.com",
+
     ],
     usdtAddress: "0xe8ab99474b8bb70d0cf258623fcac8d8681a1e50"
 }
