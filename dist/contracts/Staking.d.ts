@@ -7,19 +7,22 @@ export declare namespace StakingStorage {
         maturity: BigNumberish;
         locked: BigNumberish;
         claimed: BigNumberish;
+        unclaimed: BigNumberish;
     };
     type PositionStructOutput = [
         period: bigint,
         start: bigint,
         maturity: bigint,
         locked: bigint,
-        claimed: bigint
+        claimed: bigint,
+        unclaimed: bigint
     ] & {
         period: bigint;
         start: bigint;
         maturity: bigint;
         locked: bigint;
         claimed: bigint;
+        unclaimed: bigint;
     };
 }
 export interface StakingInterface extends Interface {
@@ -378,6 +381,7 @@ export interface Staking extends BaseContract {
             bigint,
             bigint,
             bigint,
+            bigint,
             bigint
         ] & {
             period: bigint;
@@ -385,6 +389,7 @@ export interface Staking extends BaseContract {
             maturity: bigint;
             locked: bigint;
             claimed: bigint;
+            unclaimed: bigint;
         }
     ], "view">;
     positionsAndRewards: TypedContractMethod<[
@@ -524,6 +529,7 @@ export interface Staking extends BaseContract {
             bigint,
             bigint,
             bigint,
+            bigint,
             bigint
         ] & {
             period: bigint;
@@ -531,6 +537,7 @@ export interface Staking extends BaseContract {
             maturity: bigint;
             locked: bigint;
             claimed: bigint;
+            unclaimed: bigint;
         }
     ], "view">;
     getFunction(nameOrSignature: "positionsAndRewards"): TypedContractMethod<[
