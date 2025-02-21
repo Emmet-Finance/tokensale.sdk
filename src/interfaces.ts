@@ -30,6 +30,7 @@ export interface Tokensale {
 export interface IStaking {
     // READ Staking
     positions: (address: string) => Promise<TUserPositions>;
+    metrics: () => Promise<any>;
     // WRITE Staking
     stake: (signer: Signer, amount: bigint, period: Period) => Promise<string | undefined>;
     closeStake: (signer: Signer, posIndex: number) => Promise<string | undefined>;

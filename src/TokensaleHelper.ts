@@ -1,8 +1,8 @@
 import { ContractRunner, ContractTransactionReceipt, ContractTransactionResponse, JsonRpcProvider, Provider, ZeroAddress } from "ethers";
-import { Helper, TConfig, TUserPositions } from "./types";
+import { Helper, TConfig, TMetrics, TUserPositions } from "./types";
 import { EMMET__factory, Tokensale__factory } from "./factories";
 import { EMMET } from "./contracts/EMMET";
-import { computeRefKey, parsePositionsAndRewards, sleep } from "./utils";
+import { computeRefKey, parseMetrics, parsePositionsAndRewards, sleep } from "./utils";
 import { TSymbol } from "./interfaces";
 import { Staking__factory } from "./factories/Staking__factory";
 
@@ -193,6 +193,13 @@ export async function TokensaleHelper({
                 return parsePositionsAndRewards(reply);
             });
             
+        },
+        async metrics(): Promise<TMetrics|undefined>{
+            return withRpcRotation(async (provider) => {
+                const staking = getStaking(provider);
+                const reply = await staking.metrics();
+                return parseMetrics(reply);
+            });
         },
         // -----------------------------------------------------------------
         async stake(signer, amount, period): Promise<string | undefined> {

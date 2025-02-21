@@ -1,6 +1,6 @@
 import { BigNumberish, keccak256, toUtf8Bytes } from "ethers";
 import { StakingStorage } from "./contracts/Staking";
-import { Period, PeriodInSec, Terms, TPosition, TUserPositions } from "./types";
+import { Period, PeriodInSec, Terms, TMetrics, TPosition, TUserPositions } from "./types";
 
 export function computeRefKey(ref: string): string {
   return keccak256(toUtf8Bytes(ref));
@@ -27,6 +27,18 @@ export function parsePositionsAndRewards(input: [StakingStorage.PositionStructOu
     totalRewards: Number(input[2].toString()),
     claimed: Number(input[3].toString()),
   }
+}
+
+export function parseMetrics(input: bigint[]): TMetrics | undefined{
+  if(input){
+    return {
+      locked: Number(input[0].toString()),
+      rewards: Number(input[1].toString()),
+      claimed: Number(input[2].toString()),
+      delta: Number(input[3].toString()),
+    } as TMetrics;
+  }
+  return;
 }
 
 export function sleep(ms: number): Promise<void> {
