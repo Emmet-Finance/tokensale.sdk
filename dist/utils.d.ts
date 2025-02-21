@@ -1,6 +1,6 @@
 import { BigNumberish } from "ethers";
 import { StakingStorage } from "./contracts/Staking";
-import { Period, TUserPositions } from "./types";
+import { Period, TMetrics, TUserPositions } from "./types";
 export declare function computeRefKey(ref: string): string;
 export declare function parsePositionsAndRewards(input: [StakingStorage.PositionStructOutput[], bigint, bigint, bigint] & {
     ps: StakingStorage.PositionStructOutput[];
@@ -8,6 +8,7 @@ export declare function parsePositionsAndRewards(input: [StakingStorage.Position
     ttlRewards: bigint;
     availableRewards: bigint;
 }): TUserPositions;
+export declare function parseMetrics(input: bigint[]): TMetrics | undefined;
 export declare function sleep(ms: number): Promise<void>;
 export declare function timestampToDate(ts: number): string;
 export declare function timeToMaturity(ts: number): {

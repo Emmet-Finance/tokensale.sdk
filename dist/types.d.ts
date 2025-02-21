@@ -8,6 +8,12 @@ export type TConfig = {
     usdtAddress: string;
 };
 export type Helper = Token & Tokensale & IStaking;
+export type TMetrics = {
+    locked: number;
+    rewards: number;
+    claimed: number;
+    delta: number;
+};
 export type TPosition = {
     period: number;
     start: number;
