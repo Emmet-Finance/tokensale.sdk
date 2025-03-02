@@ -1,18 +1,16 @@
 import { ContractRunner, ContractTransactionReceipt, ContractTransactionResponse, JsonRpcProvider, Provider, ZeroAddress } from "ethers";
-import { Helper, TConfig, TMetrics, TUserPositions } from "./types";
+import { Helper, TConfig, TMetrics, TTokenName, TUserPositions } from "./types";
 import { EMMET__factory, Tokensale__factory } from "./factories";
 import { EMMET } from "./contracts/EMMET";
 import { computeRefKey, parseMetrics, parsePositionsAndRewards, sleep } from "./utils";
-import { TSymbol } from "./interfaces";
 import { Staking__factory } from "./factories/Staking__factory";
 
 export async function TokensaleHelper({
     chainId,
-    emmetAddress,
     rpcs,
     stakingAddress,
+    tokenAddresses,
     tokensaleAddress,
-    usdtAddress
 }: TConfig): Promise<Helper> {
 
     const fetchProvider = (index?: number): Provider => {
@@ -22,13 +20,13 @@ export async function TokensaleHelper({
         return new JsonRpcProvider(rpcs[randomRpcIndex], chainId);
     };
 
-    const getEmmet = (runner: ContractRunner) => EMMET__factory.connect(emmetAddress, runner);
-
-    const getUsdt = (runner: ContractRunner) => EMMET__factory.connect(usdtAddress, runner);
-
     const getTokensale = (runner: ContractRunner) => Tokensale__factory.connect(tokensaleAddress, runner);
 
-    const getStaking = (runner: ContractRunner) => Staking__factory.connect(stakingAddress, runner);
+    const getStaking = (runner: ContractRunner, token: TTokenName) => Staking__factory.connect(stakingAddress[token], runner);
+
+    const getToken = (symbol: TTokenName, provider: ContractRunner): EMMET => {
+        return EMMET__factory.connect(tokenAddresses[symbol], provider);
+    }
 
     async function withRpcRotation<T>(fn: (provider: Provider) => Promise<T>, attempt = 0): Promise<T> {
         if (attempt >= rpcs.length) throw new Error("All RPCs failed");
@@ -41,13 +39,6 @@ export async function TokensaleHelper({
             return withRpcRotation(fn, attempt + 1);
         }
     }
-
-    const getToken = (symbol: TSymbol, provider: ContractRunner): EMMET => {
-        return symbol == "EMMET"
-            ? getEmmet(provider)
-            : getUsdt(provider);
-    }
-
 
     return {
         // -----------------------------------------------------------------
@@ -84,16 +75,16 @@ export async function TokensaleHelper({
         // -----------------------------------------------------------------
         // interface Token (ERC20) for Staking
         // -----------------------------------------------------------------
-        async stakingAllowance(address): Promise<bigint> {
+        async stakingAllowance(address, tokenName): Promise<bigint> {
             return withRpcRotation(async (provider) => {
-                const token: EMMET = getToken("EMMET", provider);
-                return await token.allowance(address, stakingAddress);
+                const token: EMMET = getToken(tokenName, provider);
+                return await token.allowance(address, stakingAddress[tokenName]);
             });
         },
         // -----------------------------------------------------------------
-        async stakingApprove(signer, amount): Promise<string | undefined> {
-            const token: EMMET = getToken("EMMET", signer);
-            const response: ContractTransactionResponse = await token.approve(stakingAddress, amount);
+        async stakingApprove(signer, amount, tokenName): Promise<string | undefined> {
+            const token: EMMET = getToken(tokenName, signer);
+            const response: ContractTransactionResponse = await token.approve(stakingAddress[tokenName], amount);
             const result: null | ContractTransactionReceipt = await response.wait(3);
             if(result && result.logs){
                 const topic = "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925";
@@ -185,44 +176,44 @@ export async function TokensaleHelper({
         // -----------------------------------------------------------------
         // interface IStaking
         // -----------------------------------------------------------------
-        async positions(address): Promise<TUserPositions> {
+        async positions(address, token): Promise<TUserPositions> {
 
             return withRpcRotation(async (provider) => {
-                const staking = getStaking(provider);
+                const staking = getStaking(provider, token);
                 const reply = await staking.positionsAndRewards(address);
                 return parsePositionsAndRewards(reply);
             });
             
         },
-        async metrics(): Promise<TMetrics|undefined>{
+        async metrics(token): Promise<TMetrics|undefined>{
             return withRpcRotation(async (provider) => {
-                const staking = getStaking(provider);
+                const staking = getStaking(provider, token);
                 const reply = await staking.metrics();
                 return parseMetrics(reply);
             });
         },
         // -----------------------------------------------------------------
-        async stake(signer, amount, period): Promise<string | undefined> {
+        async stake(signer, amount, period, token): Promise<string | undefined> {
             if(!signer) throw new Error("Tokensale.SDK::stake Error: signer is undefined");
-            const staking = getStaking(signer);
+            const staking = getStaking(signer, token);
             if(!staking || !staking.withdrawRewards) throw new Error("Tokensale.SDK::stake Error: staking or staking.stake is undefined");
             const response: ContractTransactionResponse = await staking.stake(amount, period);
             const result: null | ContractTransactionReceipt = response ? await response.wait(3) : null;
             return result && result.hash ? result.hash : undefined;
         },
         // -----------------------------------------------------------------
-        async closeStake(signer, posIndex): Promise<string | undefined> {
+        async closeStake(signer, posIndex, token): Promise<string | undefined> {
             if(!signer) throw new Error("Tokensale.SDK::unstake Error: signer is undefined");
-            const staking = getStaking(signer);
+            const staking = getStaking(signer, token);
             if(!staking || !staking.unpause) throw new Error("Tokensale.SDK::unstake Error: staking or staking.unpause is undefined");
             const response: ContractTransactionResponse = await staking.unstake(posIndex);
             const result: null | ContractTransactionReceipt = response ? await response.wait(3) : null;
             return result && result.hash ? result.hash : undefined;
         },
         // -----------------------------------------------------------------
-        async withdrawRewards(signer, posIndex): Promise<string | undefined> {
+        async withdrawRewards(signer, posIndex, token): Promise<string | undefined> {
             if(!signer) throw new Error("Tokensale.SDK::withdrawRewards Error: signer is undefined");
-            const staking = getStaking(signer);
+            const staking = getStaking(signer, token);
             if(!staking || !staking.withdrawRewards) throw new Error("Tokensale.SDK::withdrawRewards Error: staking or staking.withdrawRewards is undefined");
             const response: ContractTransactionResponse = await staking.withdrawRewards(posIndex);
             const result: null | ContractTransactionReceipt = response ? await response.wait(3) : null;
