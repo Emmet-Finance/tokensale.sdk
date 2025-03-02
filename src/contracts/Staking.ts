@@ -65,6 +65,7 @@ export interface StakingInterface extends Interface {
       | "cfo"
       | "coinWithdraw"
       | "decimals"
+      | "emmet"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
@@ -86,6 +87,7 @@ export interface StakingInterface extends Interface {
       | "unpause"
       | "unstake"
       | "updateCFO"
+      | "updateEmmet"
       | "updateManager"
       | "updateTerms"
       | "upgradeToAndCall"
@@ -105,6 +107,7 @@ export interface StakingInterface extends Interface {
       | "TermsUpdated"
       | "Unpaused"
       | "Unstaked"
+      | "UpdatesMinEmmetAmount"
       | "Upgraded"
       | "Withdraw"
       | "WithdrawnRewards"
@@ -137,6 +140,7 @@ export interface StakingInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(functionFragment: "emmet", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [BytesLike]
@@ -151,7 +155,7 @@ export interface StakingInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [AddressLike, AddressLike, AddressLike, boolean]
+    values: [AddressLike, AddressLike, AddressLike, AddressLike, boolean]
   ): string;
   encodeFunctionData(functionFragment: "manager", values?: undefined): string;
   encodeFunctionData(functionFragment: "metrics", values?: undefined): string;
@@ -201,6 +205,10 @@ export interface StakingInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateEmmet",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateManager",
     values: [AddressLike]
   ): string;
@@ -248,6 +256,7 @@ export interface StakingInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "emmet", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
@@ -284,6 +293,10 @@ export interface StakingInterface extends Interface {
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unstake", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "updateCFO", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateEmmet",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "updateManager",
     data: BytesLike
@@ -474,6 +487,18 @@ export namespace UnstakedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace UpdatesMinEmmetAmountEvent {
+  export type InputTuple = [newAmount: BigNumberish];
+  export type OutputTuple = [newAmount: bigint];
+  export interface OutputObject {
+    newAmount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace UpgradedEvent {
   export type InputTuple = [implementation: AddressLike];
   export type OutputTuple = [implementation: string];
@@ -588,6 +613,18 @@ export interface Staking extends BaseContract {
 
   decimals: TypedContractMethod<[], [bigint], "view">;
 
+  emmet: TypedContractMethod<
+    [],
+    [
+      [string, bigint, bigint] & {
+        emmet: string;
+        minAmount: bigint;
+        fee: bigint;
+      }
+    ],
+    "view"
+  >;
+
   getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
 
   grantRole: TypedContractMethod<
@@ -607,6 +644,7 @@ export interface Staking extends BaseContract {
       cfo_: AddressLike,
       manager_: AddressLike,
       token_: AddressLike,
+      emmet_: AddressLike,
       isProduction: boolean
     ],
     [void],
@@ -679,7 +717,7 @@ export interface Staking extends BaseContract {
   stake: TypedContractMethod<
     [amount: BigNumberish, period: BigNumberish],
     [void],
-    "nonpayable"
+    "payable"
   >;
 
   supportsInterface: TypedContractMethod<
@@ -698,6 +736,12 @@ export interface Staking extends BaseContract {
 
   updateCFO: TypedContractMethod<
     [candidate: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  updateEmmet: TypedContractMethod<
+    [minAmount: BigNumberish, fee: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -773,6 +817,19 @@ export interface Staking extends BaseContract {
     nameOrSignature: "decimals"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "emmet"
+  ): TypedContractMethod<
+    [],
+    [
+      [string, bigint, bigint] & {
+        emmet: string;
+        minAmount: bigint;
+        fee: bigint;
+      }
+    ],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "getRoleAdmin"
   ): TypedContractMethod<[role: BytesLike], [string], "view">;
   getFunction(
@@ -796,6 +853,7 @@ export interface Staking extends BaseContract {
       cfo_: AddressLike,
       manager_: AddressLike,
       token_: AddressLike,
+      emmet_: AddressLike,
       isProduction: boolean
     ],
     [void],
@@ -879,7 +937,7 @@ export interface Staking extends BaseContract {
   ): TypedContractMethod<
     [amount: BigNumberish, period: BigNumberish],
     [void],
-    "nonpayable"
+    "payable"
   >;
   getFunction(
     nameOrSignature: "supportsInterface"
@@ -899,6 +957,13 @@ export interface Staking extends BaseContract {
   getFunction(
     nameOrSignature: "updateCFO"
   ): TypedContractMethod<[candidate: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updateEmmet"
+  ): TypedContractMethod<
+    [minAmount: BigNumberish, fee: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "updateManager"
   ): TypedContractMethod<[candidate: AddressLike], [void], "nonpayable">;
@@ -992,6 +1057,13 @@ export interface Staking extends BaseContract {
     UnstakedEvent.InputTuple,
     UnstakedEvent.OutputTuple,
     UnstakedEvent.OutputObject
+  >;
+  getEvent(
+    key: "UpdatesMinEmmetAmount"
+  ): TypedContractEvent<
+    UpdatesMinEmmetAmountEvent.InputTuple,
+    UpdatesMinEmmetAmountEvent.OutputTuple,
+    UpdatesMinEmmetAmountEvent.OutputObject
   >;
   getEvent(
     key: "Upgraded"
@@ -1124,6 +1196,17 @@ export interface Staking extends BaseContract {
       UnstakedEvent.InputTuple,
       UnstakedEvent.OutputTuple,
       UnstakedEvent.OutputObject
+    >;
+
+    "UpdatesMinEmmetAmount(uint16)": TypedContractEvent<
+      UpdatesMinEmmetAmountEvent.InputTuple,
+      UpdatesMinEmmetAmountEvent.OutputTuple,
+      UpdatesMinEmmetAmountEvent.OutputObject
+    >;
+    UpdatesMinEmmetAmount: TypedContractEvent<
+      UpdatesMinEmmetAmountEvent.InputTuple,
+      UpdatesMinEmmetAmountEvent.OutputTuple,
+      UpdatesMinEmmetAmountEvent.OutputObject
     >;
 
     "Upgraded(address)": TypedContractEvent<
