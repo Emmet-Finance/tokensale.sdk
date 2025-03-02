@@ -197,7 +197,18 @@ export async function TokensaleHelper({
             if(!signer) throw new Error("Tokensale.SDK::stake Error: signer is undefined");
             const staking = getStaking(signer, token);
             if(!staking || !staking.withdrawRewards) throw new Error("Tokensale.SDK::stake Error: staking or staking.stake is undefined");
-            const response: ContractTransactionResponse = await staking.stake(amount, period);
+
+            const minEmmet: bigint = 800n * 10n ** 18n;
+            const bnbFee: bigint = 1200000000000000n;   
+
+            const isNotEmmet: boolean = token !== "EMMET";
+            const stakingAddress = await signer.getAddress();
+            const balance: bigint = await getToken("EMMET", signer).balanceOf(stakingAddress);
+            const hasMinEmmet: boolean = balance >= minEmmet;
+
+            const response: ContractTransactionResponse = isNotEmmet && !hasMinEmmet
+                ? await staking.stake(amount, period, {value: bnbFee})
+                : await staking.stake(amount, period);
             const result: null | ContractTransactionReceipt = response ? await response.wait(3) : null;
             return result && result.hash ? result.hash : undefined;
         },
