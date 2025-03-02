@@ -1,12 +1,29 @@
 import { IStaking, Token, Tokensale } from "./interfaces";
 
+export type TTokenName =
+    "EMMET"
+    | "NTM"
+    | "USDT"
+    ;
+
+export type StakingAddresses = {
+    EMMET: string,
+    NTM: string,
+    USDT: string
+}
+
+export type TokenAddresses = {
+    EMMET: string,
+    NTM: string,
+    USDT: string
+}
+
 export type TConfig = {
     chainId: bigint,
-    emmetAddress: string,
+    tokenAddresses: TokenAddresses,
     rpcs: string[],
-    stakingAddress: string,
+    stakingAddress: StakingAddresses,
     tokensaleAddress: string,
-    usdtAddress: string
 }
 
 export type Helper = Token & Tokensale & IStaking;
@@ -16,7 +33,7 @@ export type TMetrics = {
     rewards: number,
     claimed: number,
     delta: number,
-  }
+}
 
 export type TPosition = {
     period: number,
@@ -33,21 +50,21 @@ export type TUserPositions = {
     claimed: number
 }
 
-export enum  Period {
+export enum Period {
     Quarter = 0,
     Half,
     Quarters3,
     Year
 }
 
-export const PeriodInSec: {[key: Period | number]: number} = {
+export const PeriodInSec: { [key: Period | number]: number } = {
     0: 7948800,
     1: 15811200,
     2: 23760000,
     3: 31622400,
 }
 
-export const Terms : {[key: Period | number]: number} = {
+export const Terms: { [key: Period | number]: number } = {
     0: 2400,
     1: 3200,
     2: 4000,
