@@ -1,11 +1,21 @@
 import { IStaking, Token, Tokensale } from "./interfaces";
+export type TTokenName = "EMMET" | "NTM" | "USDT";
+export type StakingAddresses = {
+    EMMET: string;
+    NTM: string;
+    USDT: string;
+};
+export type TokenAddresses = {
+    EMMET: string;
+    NTM: string;
+    USDT: string;
+};
 export type TConfig = {
     chainId: bigint;
-    emmetAddress: string;
+    tokenAddresses: TokenAddresses;
     rpcs: string[];
-    stakingAddress: string;
+    stakingAddress: StakingAddresses;
     tokensaleAddress: string;
-    usdtAddress: string;
 };
 export type Helper = Token & Tokensale & IStaking;
 export type TMetrics = {
