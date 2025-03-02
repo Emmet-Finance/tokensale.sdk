@@ -1,5 +1,5 @@
 import { Signer } from "ethers";
-import { TUserPositions, Period } from "./types";
+import { TUserPositions, Period, TTokenName } from "./types";
 
 export type TSymbol = "EMMET" | "USDT";
 
@@ -11,9 +11,9 @@ export interface Token {
     approve: (signer: Signer, amount: bigint) => Promise<string | undefined>;
     // --------------------------------------------------------------
     // READ Staking
-    stakingAllowance: (address: string) => Promise<bigint>;
+    stakingAllowance: (address: string, tokenName: TTokenName) => Promise<bigint>;
     // WRITE Staking
-    stakingApprove: (signer: Signer, amount: bigint) => Promise<string | undefined>;
+    stakingApprove: (signer: Signer, amount: bigint, tokenName: TTokenName) => Promise<string | undefined>;
 }
 
 export interface Tokensale {
@@ -29,11 +29,11 @@ export interface Tokensale {
 
 export interface IStaking {
     // READ Staking
-    positions: (address: string) => Promise<TUserPositions>;
-    metrics: () => Promise<any>;
+    positions: (address: string, token: TTokenName) => Promise<TUserPositions>;
+    metrics: (token: TTokenName) => Promise<any>;
     // WRITE Staking
-    stake: (signer: Signer, amount: bigint, period: Period) => Promise<string | undefined>;
-    closeStake: (signer: Signer, posIndex: number) => Promise<string | undefined>;
-    withdrawRewards: (signer: Signer, posIndex: number) => Promise<string | undefined>;
+    stake: (signer: Signer, amount: bigint, period: Period, token: TTokenName) => Promise<string | undefined>;
+    closeStake: (signer: Signer, posIndex: number, token: TTokenName) => Promise<string | undefined>;
+    withdrawRewards: (signer: Signer, posIndex: number, token: TTokenName) => Promise<string | undefined>;
 
 }
