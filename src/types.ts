@@ -1,4 +1,4 @@
-import { IStaking, Token, Tokensale } from "./interfaces";
+import { Common, IStaking, Token, Tokensale } from "./interfaces";
 
 export type TTokenName =
     "EMMET"
@@ -26,7 +26,7 @@ export type TConfig = {
     tokensaleAddress: string,
 }
 
-export type Helper = Token & Tokensale & IStaking;
+export type Helper = Common & Token & Tokensale & IStaking;
 
 export type TMetrics = {
     locked: number,

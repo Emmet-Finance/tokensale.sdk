@@ -42,6 +42,14 @@ export async function TokensaleHelper({
 
     return {
         // -----------------------------------------------------------------
+        // interface Common for Tokensale
+        // -----------------------------------------------------------------
+        async gasBalance(address): Promise<bigint> {
+            return withRpcRotation(async (provider) => {
+                return provider.getBalance(address);
+            });
+        },
+        // -----------------------------------------------------------------
         // interface Token (ERC20) for Tokensale
         // -----------------------------------------------------------------
         async allowance(address, symbol): Promise<bigint> {
@@ -205,6 +213,16 @@ export async function TokensaleHelper({
             const stakingAddress = await signer.getAddress();
             const balance: bigint = await getToken("EMMET", signer).balanceOf(stakingAddress);
             const hasMinEmmet: boolean = balance >= minEmmet;
+
+            const minBalance: bigint = isNotEmmet && !hasMinEmmet
+                ? bnbFee + 193000000000000n
+                : 193000000000000n;
+
+            const gasBalance:bigint = (await signer.provider?.getBalance(await signer.getAddress())) as bigint;
+
+            if(gasBalance < minBalance){
+                throw new Error("Tokensale.SDK::stake Error: Insufficient BNB Balance");
+            }
 
             const response: ContractTransactionResponse = isNotEmmet && !hasMinEmmet
                 ? await staking.stake(amount, period, {value: bnbFee})

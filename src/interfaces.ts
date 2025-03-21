@@ -1,12 +1,14 @@
 import { Signer } from "ethers";
 import { TUserPositions, Period, TTokenName } from "./types";
 
-export type TSymbol = "EMMET" | "USDT";
+export interface Common {
+    gasBalance: (address: string) => Promise<bigint>;
+}
 
 export interface Token {
     // READ Tokensale
-    allowance: (address: string, symbol: TSymbol) => Promise<bigint>;
-    balance: (address: string, symbol: TSymbol) => Promise<bigint>;
+    allowance: (address: string, symbol: TTokenName) => Promise<bigint>;
+    balance: (address: string, symbol: TTokenName) => Promise<bigint>;
     // WRITE Tokensale
     approve: (signer: Signer, amount: bigint) => Promise<string | undefined>;
     // --------------------------------------------------------------
