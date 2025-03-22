@@ -153,8 +153,8 @@ export async function TokensaleHelper({
         },
         // -----------------------------------------------------------------
         async claim(signer): Promise<string|undefined> {
-            const tokensale = getTokensale(signer);
-            const response: ContractTransactionResponse = await tokensale.claim();
+            const _tokensale = getTokensale(signer);
+            const response: ContractTransactionResponse = await _tokensale.claim();
             const result: null | ContractTransactionReceipt = await response.wait(3);
             if(result && result.logs){
                 const topic = "0x896e034966eaaf1adc54acc0f257056febbd300c9e47182cf761982cf1f5e430";
