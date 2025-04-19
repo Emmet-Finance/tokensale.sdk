@@ -1,11 +1,14 @@
-import { ContractRunner, ContractTransactionReceipt, ContractTransactionResponse, JsonRpcProvider, Provider, ZeroAddress } from "ethers";
+import { ContractRunner, ContractTransactionReceipt, ContractTransactionResponse, ethers, JsonRpcProvider, Provider, ZeroAddress } from "ethers";
 import { Helper, TConfig, TMetrics, TTokenName, TUserPositions } from "./types";
 import { EMMET__factory, Tokensale__factory } from "./factories";
 import { EMMET } from "./contracts/EMMET";
 import { computeRefKey, parseMetrics, parsePositionsAndRewards, sleep } from "./utils";
 import { Staking__factory } from "./factories/Staking__factory";
+import { EmmetZealyAirdrop__factory } from "./factories/EmmetZealyAirdrop__factory";
+import { TAirdropPosition } from "./interfaces";
 
 export async function TokensaleHelper({
+    airdropAddress,
     chainId,
     rpcs,
     stakingAddress,
@@ -20,20 +23,42 @@ export async function TokensaleHelper({
         return new JsonRpcProvider(rpcs[randomRpcIndex], chainId);
     };
 
-    const getTokensale = (runner: ContractRunner) => Tokensale__factory.connect(tokensaleAddress, runner);
+    const getAirdrop = (
+        runner: ContractRunner
+    ) => EmmetZealyAirdrop__factory.connect(airdropAddress, runner);
 
-    const getStaking = (runner: ContractRunner, token: TTokenName) => Staking__factory.connect(stakingAddress[token], runner);
+    const getTokensale = (
+        runner: ContractRunner
+    ) => Tokensale__factory.connect(tokensaleAddress, runner);
 
-    const getToken = (symbol: TTokenName, provider: ContractRunner): EMMET => {
+    const getStaking = (
+        runner: ContractRunner,
+        token: TTokenName
+    ) => Staking__factory.connect(stakingAddress[token], runner);
+
+    const getToken = (
+        symbol: TTokenName, 
+        provider: ContractRunner
+    ): EMMET => {
         return EMMET__factory.connect(tokenAddresses[symbol], provider);
     }
 
-    async function withRpcRotation<T>(fn: (provider: Provider) => Promise<T>, attempt = 0): Promise<T> {
+    async function withRpcRotation<T>(
+        fn: (provider: Provider) => Promise<T>, 
+        attempt = 0,
+        verbouse = false
+    ): Promise<T> {
         if (attempt >= rpcs.length) throw new Error("All RPCs failed");
 
         const provider = fetchProvider(attempt);
-        try {
-            return await fn(provider);
+        if(verbouse){
+            console.log("provider URL:", rpcs[attempt], "attempt", attempt);
+        }
+        try {const result = await fn(provider);
+            if(verbouse){
+                console.log("withRpcRotation result:", result);
+            }
+            return result;
         } catch {
             await sleep(1000); // Wait before retrying
             return withRpcRotation(fn, attempt + 1);
@@ -41,6 +66,41 @@ export async function TokensaleHelper({
     }
 
     return {
+        // -----------------------------------------------------------------
+        // interface Airdrop
+        // -----------------------------------------------------------------
+        async claimableAirdrop(address): Promise<bigint> {
+            return withRpcRotation(async (provider) => {
+                const airdrop = getAirdrop(provider);
+                return await airdrop.claimable(address);
+            });
+        },
+        async claimAirdrop(signer): Promise<string|undefined> {
+            const airdrop = getAirdrop(signer);
+            const response: ContractTransactionResponse = await airdrop.claim();
+            const result: null | ContractTransactionReceipt = await response.wait(3);
+            if(result && result.logs){
+                const topic = ethers.id("Claimed(address,uint256)");
+                for(const log of result.logs){
+                    if(log.topics.includes(topic)){
+                        return log.transactionHash
+                    }
+                }
+            }
+            return undefined;
+        },
+        async positionsAirdrop(address): Promise<TAirdropPosition> {
+            return withRpcRotation<TAirdropPosition>(async (provider) => {
+                const airdrop = getAirdrop(provider);
+                const reply: [bigint, bigint] 
+                    & { locked: bigint; unlocked: bigint } = await airdrop.positions(address);
+                // Convert bigint to number
+                return {
+                    locked: Number(reply.locked),
+                    unlocked: Number(reply.unlocked),
+                } as TAirdropPosition;
+            });
+        },
         // -----------------------------------------------------------------
         // interface Common for Tokensale
         // -----------------------------------------------------------------

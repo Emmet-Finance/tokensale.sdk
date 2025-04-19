@@ -1,4 +1,4 @@
-import { Common, IStaking, Token, Tokensale } from "./interfaces";
+import { Common, IAirdrop, IStaking, Token, Tokensale } from "./interfaces";
 
 export type TTokenName =
     "EMMET"
@@ -19,6 +19,7 @@ export type TokenAddresses = {
 }
 
 export type TConfig = {
+    airdropAddress: string,
     chainId: bigint,
     tokenAddresses: TokenAddresses,
     rpcs: string[],
@@ -26,7 +27,7 @@ export type TConfig = {
     tokensaleAddress: string,
 }
 
-export type Helper = Common & Token & Tokensale & IStaking;
+export type Helper = IAirdrop & Common & Token & Tokensale & IStaking;
 
 export type TMetrics = {
     locked: number,

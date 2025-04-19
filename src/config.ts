@@ -1,6 +1,7 @@
 import { TConfig } from "./types";
 
 export const mainnetConfig: TConfig = {
+    airdropAddress: "0xA1D2b601445C001CAb4Ec652c703d191856da627",
     chainId: 56n,
     tokenAddresses: {
         EMMET: "0x6b30f76CecE9F92D27f0e9Ad78312E77709E74A5",
@@ -28,6 +29,7 @@ export const mainnetConfig: TConfig = {
 }
 
 export const testnetConfig: TConfig = {
+    airdropAddress: "",
     chainId: 97n,
     tokenAddresses: {
         EMMET: "0xd455eba1b88d175778968c45d161bac6fd5c8e60",
