@@ -1,5 +1,14 @@
 import { Signer } from "ethers";
 import { TUserPositions, Period, TTokenName } from "./types";
+export type TAirdropPosition = {
+    locked: number;
+    unlocked: number;
+};
+export interface IAirdrop {
+    claimableAirdrop: (address: string) => Promise<bigint>;
+    claimAirdrop: (signer: Signer) => Promise<string | undefined>;
+    positionsAirdrop: (address: string) => Promise<TAirdropPosition>;
+}
 export interface Common {
     gasBalance: (address: string) => Promise<bigint>;
 }
