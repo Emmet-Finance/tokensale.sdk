@@ -15,7 +15,6 @@ export const mainnetConfig: TConfig = {
     },
     tokensaleAddress: "0x02D4c32a5D68ABEE334d68f21C81012C37D625b7",
     rpcs: [
-        "https://binance.llamarpc.com",
         "https://bsc-rpc.publicnode.com",
         "https://bsc.blockrazor.xyz",
         "https://rpc-bsc.48.club",
