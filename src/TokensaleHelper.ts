@@ -1,5 +1,5 @@
 import { ContractRunner, ContractTransactionReceipt, ContractTransactionResponse, ethers, JsonRpcProvider, Provider, ZeroAddress } from "ethers";
-import { Helper, TConfig, TMetrics, TTokenName, TUserPositions } from "./types";
+import { Helper, TCashTokenName, TConfig, TMetrics, TStakedTokenName, TTokenName, TUserPositions } from "./types";
 import { EMMET__factory, Tokensale__factory } from "./factories";
 import { EMMET } from "./contracts/EMMET";
 import { computeRefKey, parseMetrics, parsePositionsAndRewards, sleep } from "./utils";
@@ -13,7 +13,7 @@ export async function TokensaleHelper({
     rpcs,
     stakingAddress,
     tokenAddresses,
-    tokensaleAddress,
+    tokensales,
 }: TConfig): Promise<Helper> {
 
     const fetchProvider = (index?: number): Provider => {
@@ -28,12 +28,13 @@ export async function TokensaleHelper({
     ) => EmmetZealyAirdrop__factory.connect(airdropAddress, runner);
 
     const getTokensale = (
-        runner: ContractRunner
-    ) => Tokensale__factory.connect(tokensaleAddress, runner);
+        runner: ContractRunner,
+        cash: TCashTokenName
+    ) => Tokensale__factory.connect(tokensales[cash], runner);
 
     const getStaking = (
         runner: ContractRunner,
-        token: TTokenName
+        token: TStakedTokenName
     ) => Staking__factory.connect(stakingAddress[token], runner);
 
     const getToken = (
@@ -112,10 +113,10 @@ export async function TokensaleHelper({
         // -----------------------------------------------------------------
         // interface Token (ERC20) for Tokensale
         // -----------------------------------------------------------------
-        async allowance(address, symbol): Promise<bigint> {
+        async allowance(address, symbol, cash="USDT"): Promise<bigint> {
             return withRpcRotation(async (provider) => {
                 const token: EMMET = getToken(symbol, provider);
-                return await token.allowance(address, tokensaleAddress);
+                return await token.allowance(address, tokensales[cash]);
             });
         },
         // -----------------------------------------------------------------
@@ -126,9 +127,9 @@ export async function TokensaleHelper({
             });
         },
         // -----------------------------------------------------------------
-        async approve(signer, amount): Promise<string|undefined> {
-            const token: EMMET = getToken("USDT", signer);
-            const response: ContractTransactionResponse = await token.approve(tokensaleAddress, amount);
+        async approve(signer, amount, cash="USDT"): Promise<string|undefined> {
+            const token: EMMET = getToken(cash, signer);
+            const response: ContractTransactionResponse = await token.approve(tokensales[cash], amount);
             const result: null | ContractTransactionReceipt = await response.wait(3);
             if(result && result.logs){
                 const topic = "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925";
@@ -167,24 +168,24 @@ export async function TokensaleHelper({
         // -----------------------------------------------------------------
         // interface Tokensale
         // -----------------------------------------------------------------
-        async claimable(address): Promise<bigint> {
+        async claimable(address, cash): Promise<bigint> {
             return withRpcRotation(async (provider) => {
-                const tokensale = getTokensale(provider);
+                const tokensale = getTokensale(provider, cash);
                 return await tokensale.claimable(address);
             });
         },
         // -----------------------------------------------------------------
-        async estimate(pay): Promise<bigint> {
+        async estimate(pay, cash): Promise<bigint> {
             return withRpcRotation(async (provider) => {
-                const tokensale = getTokensale(provider);
+                const tokensale = getTokensale(provider, cash);
                 return await tokensale.estimate(pay);
             });
         },
         // -----------------------------------------------------------------
-        async isRegisteredRef(ref): Promise<boolean> {
+        async isRegisteredRef(ref, cash): Promise<boolean> {
             if(ref){
                 return withRpcRotation(async (provider) => {
-                    const tokensale = getTokensale(provider);
+                    const tokensale = getTokensale(provider, cash);
                     const key = computeRefKey(ref);
                     const owner = await tokensale.references(key);
                     if(owner !== ZeroAddress){
@@ -197,8 +198,8 @@ export async function TokensaleHelper({
             return false;
         },
         // -----------------------------------------------------------------
-        async buy(signer, pay, ref): Promise<string|undefined> {
-            const tokensale = getTokensale(signer);
+        async buy(signer, pay, ref, cash): Promise<string|undefined> {
+            const tokensale = getTokensale(signer, cash);
             const response: ContractTransactionResponse = await tokensale.buy(pay, ref);
             const result: null | ContractTransactionReceipt = await response.wait(3);
             if(result && result.logs){
@@ -212,8 +213,8 @@ export async function TokensaleHelper({
             return undefined;
         },
         // -----------------------------------------------------------------
-        async claim(signer): Promise<string|undefined> {
-            const _tokensale = getTokensale(signer);
+        async claim(signer, cash): Promise<string|undefined> {
+            const _tokensale = getTokensale(signer, cash);
             const response: ContractTransactionResponse = await _tokensale.claim();
             const result: null | ContractTransactionReceipt = await response.wait(3);
             if(result && result.logs){
@@ -227,8 +228,8 @@ export async function TokensaleHelper({
             return undefined;
         },
         // -----------------------------------------------------------------
-        async createReference(signer, ref): Promise<string|undefined> {
-            const tokensale = getTokensale(signer);
+        async createReference(signer, ref, cash): Promise<string|undefined> {
+            const tokensale = getTokensale(signer, cash);
             const response: ContractTransactionResponse = await tokensale.createReference(ref);
             const result: null | ContractTransactionReceipt = await response.wait(3);
             if(result && result.logs){

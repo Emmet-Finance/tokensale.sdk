@@ -1,20 +1,28 @@
 import { Common, IAirdrop, IStaking, Token, Tokensale } from "./interfaces";
 
-export type TTokenName =
-    "EMMET"
+export type TStakedTokenName = 
+    "EMMET" 
     | "NTM"
+    ;
+
+export type TTokenName = TStakedTokenName |
+    "USDC"
     | "USDT"
     ;
+
+export type TCashTokenName = "USDC" | "USDT";
+
+export type TTokensale = {[key in TCashTokenName]: string};
 
 export type StakingAddresses = {
     EMMET: string,
     NTM: string,
-    USDT: string
 }
 
 export type TokenAddresses = {
     EMMET: string,
     NTM: string,
+    USDC: string,
     USDT: string
 }
 
@@ -24,7 +32,7 @@ export type TConfig = {
     tokenAddresses: TokenAddresses,
     rpcs: string[],
     stakingAddress: StakingAddresses,
-    tokensaleAddress: string,
+    tokensales: TTokensale,
 }
 
 export type Helper = IAirdrop & Common & Token & Tokensale & IStaking;
