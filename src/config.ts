@@ -19,15 +19,28 @@ export const mainnetConfig: TConfig = {
         USDT: "0x02D4c32a5D68ABEE334d68f21C81012C37D625b7"
     },
     rpcs: [
+        "https://bnb.rpc.subquery.network/public",
+        "https://bsc.rpc.blxrbdn.com",
         "https://bsc-rpc.publicnode.com",
         "https://bsc.blockrazor.xyz",
         "https://rpc-bsc.48.club",
         "https://bsc-dataseed1.ninicoin.io",
         "https://bsc-dataseed2.ninicoin.io",
+        "https://bsc-dataseed3.ninicoin.io",
+        "https://bsc-dataseed4.ninicoin.io",
+        "https://bsc-dataseed1.bnbchain.org",
+        "https://bsc-dataseed2.bnbchain.org",
         "https://bsc-dataseed3.bnbchain.org",
+        "https://bsc-dataseed4.bnbchain.org",
         "https://bsc-pokt.nodies.app",
+        "https://rpc-bsc.48.club",
+        "https://0.48.club",
         "https://1rpc.io/bnb",
         "https://bsc-rpc.publicnode.com",
+        "https://bsc-mainnet.rpcfast.com?api_key=xbhWBI1Wkguk8SNMu1bvvLurPGLXmgwYeC4S6g2H7WdwFigZSmPWVZRxrskEQwIf",
+        "https://bsc.rpc.blxrbdn.com",
+        "https://api.zan.top/bsc-mainnet",
+        
     ],
 }
 
